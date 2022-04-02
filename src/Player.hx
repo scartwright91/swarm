@@ -72,8 +72,9 @@ class Player {
 
         drawHealthAndEnergy();
 
-        // movement
-        dx = dy = 0;
+        if (Key.isReleased(Key.B)) {
+            Game.ME.swarm.addSwarm();
+        }
 
         if ((Key.isPressed(Key.SPACE)) && (magic == 100)) {
             castSpell();
@@ -103,6 +104,9 @@ class Player {
                 spr.removeChild(spell);
             }
         }
+
+        // movement
+        dx = dy = 0;
 
         if (Key.isDown(Key.A)) {
             dx = -(speed * energy/100);

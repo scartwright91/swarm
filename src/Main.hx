@@ -35,10 +35,8 @@ class Main extends hxd.App {
         menu = new ui.StartMenu();
         end = new ui.EndMenu();
 
+        resizeWindow();
         hxd.Window.getInstance().addResizeEvent(resizeWindow);
-
-        windowWidth = hxd.Window.getInstance().width;
-        windowHeight = hxd.Window.getInstance().height;
         
         menuRunning = true;
         setScene(menu.menuScene);
@@ -49,12 +47,6 @@ class Main extends hxd.App {
         fps = new h2d.Text(DefaultFont.get(), gameScene2d);
         fps.text = "";
         fps.scale(2);
-
-        // debugging
-		fui = new h2d.Flow(gameScene2d);
-		fui.layout = Vertical;
-		fui.verticalSpacing = 5;
-		fui.padding = 10;
 
     }
 
@@ -72,7 +64,6 @@ class Main extends hxd.App {
 
     public function enterGame() {
         menuRunning = false;
-        //s2d.events.defaultCursor = hxd.Cursor.Hide;
         setScene(gameScene2d, false);
     }
 

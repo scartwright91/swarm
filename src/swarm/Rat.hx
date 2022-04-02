@@ -51,9 +51,23 @@ class Rat {
 
     }
 
-    public function update() {
+    public function destroy() {
+        spr.remove();
+    }
+
+    public function update(returning : Bool) {
 
         normalMap.scrollDiscrete(1, 1);
+
+        if (returning) {
+            var direction = Math.atan2(
+                Game.ME.swarm.swarmPixelLocation.y - spr.y,
+                Game.ME.swarm.swarmPixelLocation.x - spr.x
+            );
+            spr.x += Math.cos(direction) * 3 * Settings.SCALE;
+            spr.y += Math.sin(direction) * 3 * Settings.SCALE;
+            return;
+        }
 
         // base direction velocity
         velocity = new h2d.col.Point(Math.cos(direction), Math.sin(direction));
