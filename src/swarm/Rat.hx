@@ -32,7 +32,7 @@ class Rat {
         else 
             g.beginFill(Utils.RGBToCol(255, 255, 0, 255));
 
-        g.drawCircle(0, 0, 0.2 * Settings.TILE_SIZE * Settings.SCALE);
+        g.drawCircle(0, 0, 0.1 * Settings.TILE_SIZE * Settings.SCALE);
         g.endFill();
 
         flock = new Flocking(this);
@@ -56,14 +56,19 @@ class Rat {
         spr.x += totalVelocity.x * speed;
         spr.y += totalVelocity.y * speed;
 
-        // if player is close, move towards player
+        // If player player is close to rat
         var p = Game.ME.player.spr;
         if (distanceFrom(new h2d.col.Point(p.x, p.y)) <= flock.visibilityRadius) {
             speed = 2;
             if (flock.weightsEnabled) {
                 flock.disableWeights();
             }
-            direction = Math.atan2(p.y - spr.y, p.x - spr.x);
+            // If player is holding fire, the rat will run in the opposite direction (otherwise towards)
+            if (Game.ME.player.holdingFire) {
+                direction = Math.atan2(spr.y - p.y, spr.x - p.x);
+            } else {
+                direction = Math.atan2(p.y - spr.y, p.x - spr.x);
+            }
         } else {
             speed = 1;
             if (!flock.weightsEnabled) {
