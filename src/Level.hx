@@ -1,8 +1,11 @@
+import h2d.col.Point;
+
 class Level {
 
     public var level : World.World_Level;
 
     public var collisionGrid : Array<Array<Int>>;
+    public var spawnPoints : Array<h2d.col.Point> = [];
 
     public var gridLengthX : Int;
     public var gridLengthY : Int;
@@ -31,7 +34,10 @@ class Level {
             for (y in 0...gridLengthY) {
                 var w = level.l_IntGrid.hasValue(x, y);
                 if (w) {
-                    collisionGrid[x][y] = 1;
+                    if (level.l_IntGrid.getName(x, y) == "wall")
+                        collisionGrid[x][y] = 1;
+                    if (level.l_IntGrid.getName(x, y) == "spawn")
+                        spawnPoints.push(new h2d.col.Point(x, y));
                 }
             }
         }

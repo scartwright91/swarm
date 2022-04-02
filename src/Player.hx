@@ -1,24 +1,35 @@
+import h2d.Graphics;
 import hxd.Key;
 import h2d.Object;
+
 
 class Player {
 
     public var spr : h2d.Object;
     var g : h2d.Graphics;
 
+    // player vars
+    public var health : Float = 100;
+    var energy : Float = 100;
+    var magic : Float = 100;
+    var healthBar : h2d.Graphics;
+    var energyBar : h2d.Graphics;
+    var magicBar : h2d.Graphics;
+
     // location vars
     var tile : h2d.col.IPoint;
-    var center : h2d.col.Point;
+    public var center : h2d.col.Point;
 
     // movement vars
     var dx : Float = 0;
     var dy : Float = 0;
     var speed : Float = 8;
 
-    // items
-    public var holdingFire : Bool = false;
-    var fire : h2d.Graphics;
-    var fireRadius : Float = 100 * Settings.SCALE;
+    // spell
+    var spell : h2d.Graphics;
+    public var spellCast : Bool = false;
+    var spellDuration : Float;
+    var magicRecoverRate : Float = 1;
 
     public function new(x, y) {
 
@@ -38,51 +49,56 @@ class Player {
         g.drawRect(0, 0, Settings.TILE_SIZE * Settings.SCALE, Settings.TILE_SIZE * Settings.SCALE);
         g.endFill();
 
+        createHealthAndEnergy();
+
     }
 
     public function update() {
 
-        dx = dy = 0;
+        if (energy > 20)
+            energy -= 0.01;
 
-        if (Key.isReleased(Key.SPACE)) {
-            if (holdingFire) {
-                detachFire();
-                holdingFire = false;
-                fireRadius = 100 * Settings.SCALE;
-            } else {
-                attachFire();
-                holdingFire = true;
-            }
+        if ((magic < 100)) {
+            magic += magicRecoverRate;
+            if (magic > 100)
+                magic = 100;
         }
 
-        if (holdingFire) {
-            fireRadius -= 0.1;
-            fire.clear();
-            fire.beginFill(Utils.RGBToCol(255, 0, 0, 255));
-            fire.drawCircle(
+        drawHealthAndEnergy();
+
+        // movement
+        dx = dy = 0;
+
+        if ((Key.isPressed(Key.SPACE)) && (magic == 100)) {
+            castSpell();
+        }
+
+        if (spellCast) {
+            spell.clear();
+            spell.beginFill(Utils.RGBToCol(255, 0, 0, 255));
+            spell.drawCircle(
                 (Settings.TILE_SIZE * Settings.SCALE)/2,
                 (Settings.TILE_SIZE * Settings.SCALE)/2,
-                fireRadius
+                100 * Settings.SCALE 
             );
-            fire.endFill();
-            if (fireRadius <= (Settings.TILE_SIZE * Settings.SCALE)) {
-                detachFire();
-                holdingFire = false;
-                fireRadius = 100 * Settings.SCALE;
+            spell.endFill();
+            if (hxd.Timer.lastTimeStamp - spellDuration > 1) {
+                spellCast = false;
+                spr.removeChild(spell);
             }
         }
 
         if (Key.isDown(Key.A)) {
-            dx = -speed;
+            dx = -(speed * energy/100);
         }
         if (Key.isDown(Key.D)) {
-            dx = speed;
+            dx = (speed * energy/100);
         }
         if (Key.isDown(Key.W)) {
-            dy = -speed;
+            dy = -(speed * energy/100);
         }
         if (Key.isDown(Key.S)) {
-            dy = speed;
+            dy = (speed * energy/100);
         }
 
         // TODO:
@@ -91,6 +107,19 @@ class Player {
 
         spr.x += dx;
         spr.y += dy;
+
+        if (spr.x < Settings.TILE_SIZE * Settings.SCALE) {
+            spr.x = Settings.TILE_SIZE * Settings.SCALE;
+        }
+        if (spr.x > Game.ME.level.pxWid - 2 * (Settings.TILE_SIZE * Settings.SCALE)) {
+            spr.x = Game.ME.level.pxWid - 2 * (Settings.TILE_SIZE * Settings.SCALE);
+        }
+        if (spr.y < Settings.TILE_SIZE * Settings.SCALE) {
+            spr.y = Settings.TILE_SIZE * Settings.SCALE;
+        }
+        if (spr.y > Game.ME.level.pxHei - 2 * (Settings.TILE_SIZE * Settings.SCALE)) {
+            spr.y = Game.ME.level.pxHei - 2 * (Settings.TILE_SIZE * Settings.SCALE);
+        }
 
         center = new h2d.col.Point(
             spr.x + (Settings.TILE_SIZE * Settings.SCALE)/2,
@@ -107,20 +136,77 @@ class Player {
         return new h2d.col.IPoint(tx, ty);
     }
 
-    function attachFire() {
-        fire = new h2d.Graphics(spr);
-        fire.beginFill(Utils.RGBToCol(255, 0, 0, 255));
-        fire.drawCircle(
+    function castSpell() {
+        spell = new h2d.Graphics(spr);
+        spell.beginFill(Utils.RGBToCol(255, 0, 0, 255));
+        spell.drawCircle(
             (Settings.TILE_SIZE * Settings.SCALE)/2,
             (Settings.TILE_SIZE * Settings.SCALE)/2,
-            fireRadius
+            100 * Settings.SCALE
         );
-        fire.endFill();
-        fire.alpha = 0.5;
+        spell.endFill();
+        spell.alpha = 0.5;
+        spellCast = true;
+        spellDuration = hxd.Timer.lastTimeStamp;
+        magic = 0;
+        magicRecoverRate *= 0.5;
     }
 
-    function detachFire() {
-        spr.removeChild(fire);
+    function createHealthAndEnergy() {
+
+        healthBar = new h2d.Graphics(Main.ME.gameScene2d);
+        energyBar = new h2d.Graphics(Main.ME.gameScene2d);
+        magicBar = new h2d.Graphics(Main.ME.gameScene2d);
+
+        var w = Main.ME.windowWidth * 0.15;
+        var h = Main.ME.windowHeight * 0.03;
+
+        healthBar.x = Main.ME.windowWidth * 0.02;
+        healthBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.15;
+        healthBar.beginFill(Utils.RGBToCol(255, 0, 0, 255));
+        healthBar.drawRect(0, 0, w, h);
+        healthBar.endFill();
+
+        energyBar.x = Main.ME.windowWidth * 0.02;
+        energyBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
+        energyBar.beginFill(Utils.RGBToCol(0, 0, 255, 255));
+        energyBar.drawRect(0, 0, w, h);
+        energyBar.endFill();
+
+        magicBar.x = Main.ME.windowWidth * 0.02;
+        magicBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.05;
+        magicBar.beginFill(Utils.RGBToCol(255, 255, 0, 255));
+        magicBar.drawRect(0, 0, w, h);
+        magicBar.endFill();
+
+    }
+
+    function drawHealthAndEnergy() {
+
+        var w = Main.ME.windowWidth * 0.15;
+        var h = Main.ME.windowHeight * 0.03;
+
+        healthBar.clear();
+        healthBar.x = Main.ME.windowWidth * 0.02;
+        healthBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.15;
+        healthBar.beginFill(Utils.RGBToCol(255, 0, 0, 255));
+        healthBar.drawRect(0, 0, w * health/100, h);
+        healthBar.endFill();
+
+        energyBar.clear();
+        energyBar.x = Main.ME.windowWidth * 0.02;
+        energyBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
+        energyBar.beginFill(Utils.RGBToCol(0, 0, 255, 255));
+        energyBar.drawRect(0, 0, w * energy / 100, h);
+        energyBar.endFill();
+
+        magicBar.clear();
+        magicBar.x = Main.ME.windowWidth * 0.02;
+        magicBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.05;
+        magicBar.beginFill(Utils.RGBToCol(255, 255, 0, 255));
+        magicBar.drawRect(0, 0, w * magic / 100, h);
+        magicBar.endFill();
+
     }
 
 }

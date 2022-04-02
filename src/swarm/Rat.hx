@@ -6,7 +6,8 @@ class Rat {
     var g : h2d.Graphics;
 
     // vars
-    var speed : Float = 1;
+    var speed : Float = 2 * Settings.SCALE;
+    var biteRadius : Float = 10 * Settings.SCALE;
 
     // direction vars
     var flock : Flocking;
@@ -57,20 +58,26 @@ class Rat {
         spr.y += totalVelocity.y * speed;
 
         // If player player is close to rat
-        var p = Game.ME.player.spr;
+        var p = Game.ME.player.center;
         if (distanceFrom(new h2d.col.Point(p.x, p.y)) <= flock.visibilityRadius) {
-            speed = 2;
+            speed = 3 * Settings.SCALE;
             if (flock.weightsEnabled) {
                 flock.disableWeights();
             }
             // If player is holding fire, the rat will run in the opposite direction (otherwise towards)
-            if (Game.ME.player.holdingFire) {
+            if (Game.ME.player.spellCast) {
                 direction = Math.atan2(spr.y - p.y, spr.x - p.x);
             } else {
                 direction = Math.atan2(p.y - spr.y, p.x - spr.x);
+                // if rat is touching playing
+                if (distanceFrom(new h2d.col.Point(p.x, p.y)) <= biteRadius) {
+                    if (Game.ME.player.health > 10) {
+                        Game.ME.player.health -= 1;
+                    }
+                } 
             }
         } else {
-            speed = 1;
+            speed = 2 * Settings.SCALE;
             if (!flock.weightsEnabled) {
                 flock.enableWeights();
             }
