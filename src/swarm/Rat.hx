@@ -1,5 +1,7 @@
 package swarm;
 
+import h2d.filter.Displacement;
+
 class Rat {
 
     public var spr : h2d.Object;
@@ -18,6 +20,9 @@ class Rat {
 
     public var debugging : Bool;
 
+    // filters
+    var normalMap : h2d.Tile;
+
     public function new(x:Float, y:Float, debug:Bool) {
 
         debugging = debug;
@@ -31,8 +36,14 @@ class Rat {
         if (debugging)
             g.beginFill(Utils.RGBToCol(255, 0, 0, 255));
         else 
-            g.beginFill(Utils.RGBToCol(255, 255, 0, 255));
+            g.beginFill(Utils.RGBToCol(26, 26, 36, 255));
 
+        normalMap = hxd.Res.normalMap.toTile();
+        g.filter = new h2d.filter.Group([
+            new h2d.filter.Glow(Utils.RGBToCol(128, 128, 164, 255), 50, 2), 
+            new h2d.filter.Displacement(normalMap, 3, 3),
+            new h2d.filter.Blur(3)
+        ]);
         g.drawCircle(0, 0, 0.1 * Settings.TILE_SIZE * Settings.SCALE);
         g.endFill();
 
@@ -41,6 +52,8 @@ class Rat {
     }
 
     public function update() {
+
+        normalMap.scrollDiscrete(1, 1);
 
         // base direction velocity
         velocity = new h2d.col.Point(Math.cos(direction), Math.sin(direction));

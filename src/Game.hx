@@ -15,6 +15,8 @@ class Game {
     public var camera : Camera;
 
     public var swarm : Swarm;
+    // vfx
+    public var reflection : Reflection; 
 
     public function new() {
 
@@ -31,17 +33,8 @@ class Game {
 
         swarm = new Swarm();
 
-        //Create a custom graphics object by passing a 2d scene reference.
-        // obj = new h2d.Object(Main.ME.gameScene2d);
-        // obj.x = Main.ME.windowWidth/2;
-        // obj.y = Main.ME.windowHeight/2;
-        // var customGraphics = new h2d.Graphics(obj);
-        // customGraphics.beginFill(0xEA8220);
-        // customGraphics.drawRect(0, 0, 300, 200);
-        // customGraphics.endFill();
-
-        // normalMap = hxd.Res.normalMap.toTile();
-        // obj.filter = new h2d.filter.Displacement(normalMap, 4, 4);
+        // vfx
+        //reflection = new Reflection();
 
     }
 
@@ -49,7 +42,7 @@ class Game {
         player.update();
         camera.update();
         swarm.update();
-        // normalMap.scrollDiscrete(1.2 * dt * 40, 2.4 * dt * 40);
+        level.update();
     }
 
 }

@@ -13,57 +13,64 @@ class Level {
     public var pxWid : Int;
     public var pxHei : Int;
 
+    // tilegroups
+    var water : h2d.TileGroup;
+    var walls : h2d.TileGroup;
+
+    // filters
+    public var normalMap : h2d.Tile;
+
     public function new(l:World.World_Level) {
 
         level = l;
 
-        gridLengthX = level.l_IntGrid.cWid;
-        gridLengthY = level.l_IntGrid.cHei;
+        gridLengthX = level.l_Floor.cWid;
+        gridLengthY = level.l_Floor.cHei;
 
         pxWid = Std.int(level.pxWid * Settings.SCALE);
         pxHei = Std.int(level.pxHei * Settings.SCALE);
 
-        createCollisionGrid();
         createLevel();
+        addFilters();
 
     }
 
-    function createCollisionGrid() {
-        collisionGrid = [for (x in 0...gridLengthX) [for (y in 0...gridLengthY) 0]];
-        for (x in 0...gridLengthX) {
-            for (y in 0...gridLengthY) {
-                var w = level.l_IntGrid.hasValue(x, y);
-                if (w) {
-                    if (level.l_IntGrid.getName(x, y) == "wall")
-                        collisionGrid[x][y] = 1;
-                    if (level.l_IntGrid.getName(x, y) == "spawn")
-                        spawnPoints.push(new h2d.col.Point(x, y));
-                }
-            }
-        }
+    public function update() {
+        //normalMap.scrollDiscrete(0.5, 0.5);
     }
 
     function createLevel() {
 
-        for (x in 0...gridLengthX) {
-            for (y in 0...gridLengthY) {
+        var tileset = hxd.Res.tileset_png.toTile();
+        var tiles = new h2d.TileGroup(tileset);
+        Game.ME.scroller.add(tiles, Settings.BG_LAYER);
 
-                if (collisionGrid[x][y] == 1) {
+		for( autoTile in level.l_Floor.autoTiles ) {
+			var tile = level.l_Floor.tileset.getAutoLayerTile(autoTile);
+            tile.scaleToSize(tile.width * Settings.SCALE, tile.height * Settings.SCALE);
+			tiles.add(autoTile.renderX * Settings.SCALE , autoTile.renderY * Settings.SCALE, tile);
+		}
 
-                    var obj = new h2d.Object();
-                    Game.ME.scroller.add(obj, Settings.OBJECT_LAYER);
-                    obj.x = x * Settings.TILE_SIZE * Settings.SCALE;
-                    obj.y = y * Settings.TILE_SIZE * Settings.SCALE;
-                    var customGraphics = new h2d.Graphics(obj);
-                    customGraphics.beginFill(0xEA8220);
-                    customGraphics.drawRect(0, 0, Settings.TILE_SIZE * Settings.SCALE, Settings.TILE_SIZE * Settings.SCALE);
-                    customGraphics.endFill();
+        walls = level.l_Walls.render();
+        walls.scale(Settings.SCALE);
+        Game.ME.scroller.add(walls, Settings.BG_LAYER);
 
-                }
+        water = level.l_Water.render();
+        water.scale(Settings.SCALE);
+        Game.ME.scroller.add(water, Settings.BG_LAYER);
 
-            }
+        for (ent in level.l_Entities.all_SpawnPoint) {
+            var spawn = new h2d.col.Point(ent.cx, ent.cy);
+            spawnPoints.push(spawn);
         }
 
+    }
+
+    function addFilters() {
+        normalMap = hxd.Res.normalMap.toTile();
+        //water.filter = new h2d.filter.Displacement(normalMap, 4, 4);
+        // var testShader = new shaders.TestShader();
+        // water.addShader(testShader); 
     }
 
 }

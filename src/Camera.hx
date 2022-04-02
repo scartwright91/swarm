@@ -27,6 +27,8 @@ class Camera {
         // Apply camera
         scroller.x = winWid * 0.5 - target.x;
         scroller.y = winHei * 0.5 - target.y;
+        Main.ME.reflectionScene.x = winWid * 0.5 - target.x;
+        Main.ME.reflectionScene.y = winHei * 0.5 - target.y;
         // Clamp camera to bounds
         if (winWid < levelWid)
             scroller.x = fclamp(scroller.x, winWid - levelWid, 0);

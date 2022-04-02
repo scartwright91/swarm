@@ -26,6 +26,8 @@ class Player {
     var speed : Float = 8;
 
     // spell
+    var spellFrame : Int = 0;
+    var spellImages : Array<h2d.Tile>;
     var spell : h2d.Graphics;
     public var spellCast : Bool = false;
     var spellDuration : Float;
@@ -44,10 +46,14 @@ class Player {
 
         tile = new h2d.col.IPoint(x, y);
 
+        spellImages = [
+            hxd.Res.spell1.toTile(),
+            hxd.Res.spell2.toTile(),
+            hxd.Res.spell3.toTile()
+        ];
+        var img = hxd.Res.player_png.toTile();
         g = new h2d.Graphics(spr);
-        g.beginFill(Utils.RGBToCol(0, 0, 255, 255));
-        g.drawRect(0, 0, Settings.TILE_SIZE * Settings.SCALE, Settings.TILE_SIZE * Settings.SCALE);
-        g.endFill();
+        g.drawTile(0, 0, img);
 
         createHealthAndEnergy();
 
@@ -74,15 +80,25 @@ class Player {
         }
 
         if (spellCast) {
-            spell.clear();
-            spell.beginFill(Utils.RGBToCol(255, 0, 0, 255));
-            spell.drawCircle(
-                (Settings.TILE_SIZE * Settings.SCALE)/2,
-                (Settings.TILE_SIZE * Settings.SCALE)/2,
-                100 * Settings.SCALE 
-            );
-            spell.endFill();
-            if (hxd.Timer.lastTimeStamp - spellDuration > 1) {
+
+            var diff = hxd.Timer.lastTimeStamp - spellDuration;
+            if ((spellFrame == 0) && (diff > 0.1)) {
+                spellFrame += 1;
+                spell.drawTile(
+                    (Settings.TILE_SIZE * Settings.SCALE)/2-200,
+                    (Settings.TILE_SIZE * Settings.SCALE)/2-200,
+                spellImages[spellFrame]
+                );
+            }
+            if ((spellFrame == 1) && (diff > 0.2)) {
+                spellFrame += 1;
+                spell.drawTile(
+                    (Settings.TILE_SIZE * Settings.SCALE)/2-200,
+                    (Settings.TILE_SIZE * Settings.SCALE)/2-200,
+                spellImages[spellFrame]
+                );
+            }
+            if (diff > 1) {
                 spellCast = false;
                 spr.removeChild(spell);
             }
@@ -138,16 +154,14 @@ class Player {
 
     function castSpell() {
         spell = new h2d.Graphics(spr);
-        spell.beginFill(Utils.RGBToCol(255, 0, 0, 255));
-        spell.drawCircle(
-            (Settings.TILE_SIZE * Settings.SCALE)/2,
-            (Settings.TILE_SIZE * Settings.SCALE)/2,
-            100 * Settings.SCALE
+        spell.drawTile(
+            (Settings.TILE_SIZE * Settings.SCALE)/2-200,
+            (Settings.TILE_SIZE * Settings.SCALE)/2-200,
+        spellImages[spellFrame]
         );
-        spell.endFill();
-        spell.alpha = 0.5;
         spellCast = true;
         spellDuration = hxd.Timer.lastTimeStamp;
+        spellFrame = 0;
         magic = 0;
         magicRecoverRate *= 0.5;
     }
