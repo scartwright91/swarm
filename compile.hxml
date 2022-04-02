@@ -1,0 +1,9 @@
+-cp src
+
+-lib heaps
+-lib deepnightLibs
+-lib ldtk-haxe-api
+-lib hxbit
+
+-main Main
+-debug
