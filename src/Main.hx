@@ -1,3 +1,6 @@
+
+import hxd.res.DefaultFont;
+
 @:access(h2d.Scene)
 class Main extends hxd.App {
 
@@ -14,6 +17,9 @@ class Main extends hxd.App {
     // scenes
     public var gameScene2d : h2d.Scene;
     public var gameScene3d : h3d.scene.Scene;
+
+    // fps
+    var fps : h2d.Text;
 
     override function init() {
 
@@ -36,10 +42,16 @@ class Main extends hxd.App {
 
         game = new Game();
 
+        // render fps
+        fps = new h2d.Text(DefaultFont.get(), gameScene2d);
+        fps.text = "";
+        fps.scale(2);
+
     }
 
     override function update(dt:Float) {
         if (!menuRunning) {
+            fps.text = "FPS: " + Std.int(1 / dt);
             game.update(dt);
         }
     }
