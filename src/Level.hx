@@ -17,8 +17,8 @@ class Level {
         gridLengthX = level.l_IntGrid.cWid;
         gridLengthY = level.l_IntGrid.cHei;
 
-        pxWid = level.pxWid;
-        pxHei = level.pxHei;
+        pxWid = Std.int(level.pxWid * Settings.SCALE);
+        pxHei = Std.int(level.pxHei * Settings.SCALE);
 
         createCollisionGrid();
         createLevel();

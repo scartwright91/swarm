@@ -1,3 +1,5 @@
+import swarm.Swarm;
+
 class Game {
 
     public static var ME : Game;
@@ -12,6 +14,8 @@ class Game {
     public var player : Player;
     public var camera : Camera;
 
+    public var swarm : Swarm;
+
     public function new() {
 
         ME = this;
@@ -24,6 +28,8 @@ class Game {
 
         player = new Player(10, 10);
         camera = new Camera(player.spr);
+
+        swarm = new Swarm();
 
         //Create a custom graphics object by passing a 2d scene reference.
         // obj = new h2d.Object(Main.ME.gameScene2d);
@@ -42,6 +48,7 @@ class Game {
     public function update(dt : Float) {
         player.update();
         camera.update();
+        swarm.update();
         // normalMap.scrollDiscrete(1.2 * dt * 40, 2.4 * dt * 40);
     }
 

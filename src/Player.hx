@@ -28,7 +28,7 @@ class Player {
         tileY = y;
 
         g = new h2d.Graphics(spr);
-        g.beginFill(Utils.RGBToCol(255, 0, 0, 255));
+        g.beginFill(Utils.RGBToCol(0, 0, 255, 255));
         g.drawRect(0, 0, Settings.TILE_SIZE * Settings.SCALE, Settings.TILE_SIZE * Settings.SCALE);
         g.endFill();
 

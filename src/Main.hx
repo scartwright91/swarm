@@ -21,6 +21,9 @@ class Main extends hxd.App {
     // fps
     var fps : h2d.Text;
 
+    // debugging
+	var fui : h2d.Flow;
+
     override function init() {
 
         ME = this;
@@ -46,6 +49,16 @@ class Main extends hxd.App {
         fps = new h2d.Text(DefaultFont.get(), gameScene2d);
         fps.text = "";
         fps.scale(2);
+
+        // debugging
+		fui = new h2d.Flow(gameScene2d);
+		fui.layout = Vertical;
+		fui.verticalSpacing = 5;
+		fui.padding = 10;
+
+        addSlider("Alignment", function() return game.swarm.baseAlignmentWeight, function(v) game.swarm.baseAlignmentWeight = v, 0, 1);
+        addSlider("Cohesion", function() return game.swarm.baseCohesionWeight, function(v) game.swarm.baseCohesionWeight = v, 0, 1);
+        addSlider("Separation", function() return game.swarm.baseSeparationWeight, function(v) game.swarm.baseSeparationWeight = v, 0, 1);
 
     }
 
@@ -79,6 +92,37 @@ class Main extends hxd.App {
         windowWidth = hxd.Window.getInstance().width;
         windowHeight = hxd.Window.getInstance().height;
     }
+
+	function addSlider( label : String, get : Void -> Float, set : Float -> Void, min : Float = 0., max : Float = 1. ) {
+		var f = new h2d.Flow(fui);
+
+		f.horizontalSpacing = 5;
+
+		var tf = new h2d.Text(hxd.res.DefaultFont.get(), f);
+		tf.text = label;
+		tf.maxWidth = 70;
+		tf.textAlign = Right;
+
+		var sli = new h2d.Slider(100, 10, f);
+		sli.minValue = min;
+		sli.maxValue = max;
+		sli.value = get();
+
+		var tf = new h2d.TextInput(hxd.res.DefaultFont.get(), f);
+		tf.text = "" + hxd.Math.fmt(sli.value);
+		sli.onChange = function() {
+			set(sli.value);
+			tf.text = "" + hxd.Math.fmt(sli.value);
+			f.needReflow = true;
+		};
+		tf.onChange = function() {
+			var v = Std.parseFloat(tf.text);
+			if( Math.isNaN(v) ) return;
+			sli.value = v;
+			set(v);
+		};
+		return sli;
+	}
 
     static function main() {
         hxd.Res.initEmbed();
