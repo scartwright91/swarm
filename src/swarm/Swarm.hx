@@ -46,8 +46,8 @@ class Swarm {
         var ind = Std.int(Math.random() * Game.ME.level.spawnPoints.length);
         swarmLocation = Game.ME.level.spawnPoints[ind];
         swarmPixelLocation = new h2d.col.Point(
-            swarmLocation.x * Settings.TILE_SIZE * Settings.SCALE,
-            swarmLocation.y * Settings.TILE_SIZE * Settings.SCALE
+            swarmLocation.x * Settings.TILE_SIZE * Settings.SCALE + 0.5 * (Settings.TILE_SIZE * Settings.SCALE),
+            swarmLocation.y * Settings.TILE_SIZE * Settings.SCALE + 0.5 * (Settings.TILE_SIZE * Settings.SCALE)
         );
         addingSwarm = true;
         wave += 1;

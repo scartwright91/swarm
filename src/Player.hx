@@ -3,6 +3,14 @@ import hxd.Key;
 import h2d.Object;
 
 
+enum Facing {
+    Forward;
+    Back;
+    Left;
+    Right;
+}
+
+
 class Player {
 
     public var spr : h2d.Object;
@@ -25,6 +33,12 @@ class Player {
     var dy : Float = 0;
     var speed : Float = 8;
 
+    // animation
+    var animations : Map<String, Array<h2d.Tile>>;
+    var orientation : Facing;
+    var frame : Int = 0;
+    var animationTimer : Float = hxd.Timer.lastTimeStamp;
+
     // spell
     var spellFrame : Int = 0;
     var spellImages : Array<h2d.Tile>;
@@ -46,14 +60,16 @@ class Player {
 
         tile = new h2d.col.IPoint(x, y);
 
+        animations = readAnimations();
+
         spellImages = [
             hxd.Res.spell1.toTile(),
             hxd.Res.spell2.toTile(),
             hxd.Res.spell3.toTile()
         ];
-        var img = hxd.Res.player_png.toTile();
+
         g = new h2d.Graphics(spr);
-        g.drawTile(0, 0, img);
+        g.drawTile(0, 0, animations["forward"][0]);
 
         createHealthAndEnergy();
 
@@ -110,15 +126,23 @@ class Player {
 
         if (Key.isDown(Key.A)) {
             dx = -(speed * energy/100);
+            orientation = Left;
         }
         if (Key.isDown(Key.D)) {
             dx = (speed * energy/100);
+            orientation = Right;
         }
         if (Key.isDown(Key.W)) {
             dy = -(speed * energy/100);
+            orientation = Back;
         }
         if (Key.isDown(Key.S)) {
             dy = (speed * energy/100);
+            orientation = Forward;
+        }
+
+        if ((dx != 0) || (dy != 0)) {
+            animate();
         }
 
         // TODO:
@@ -148,6 +172,35 @@ class Player {
 
         tile = posToTile(spr.x, spr.y);
 
+    }
+
+    function animate() {
+        var now = hxd.Timer.lastTimeStamp;
+        if (now - animationTimer > 0.2) {
+            g.clear();
+            animationTimer = now;
+            if (orientation == Forward) {
+                frame += 1;
+                if (frame > 2)
+                    frame = 0;
+                g.drawTile(0, 0, animations["forward"][frame]);
+            } else if (orientation == Back) {
+                frame += 1;
+                if (frame > 2)
+                    frame = 0;
+                g.drawTile(0, 0, animations["back"][frame]);
+            } else if (orientation == Left) {
+                frame += 1;
+                if (frame > 2)
+                    frame = 0;
+                g.drawTile(0, 0, animations["left"][frame]);
+            } else if (orientation == Right) {
+                frame += 1;
+                if (frame > 2)
+                    frame = 0;
+                g.drawTile(0, 0, animations["right"][frame]);
+            }
+        }
     }
 
     function posToTile(x:Float, y:Float) : h2d.col.IPoint {
@@ -225,6 +278,36 @@ class Player {
         magicBar.drawRect(0, 0, w * magic / 100, h);
         magicBar.endFill();
 
+    }
+
+    function readAnimations() : Map<String, Array<h2d.Tile>> {
+        var forwardAnim = [
+            hxd.Res.player.player_forward1.toTile(),
+            hxd.Res.player.player_forward2.toTile(),
+            hxd.Res.player.player_forward3.toTile()
+        ];
+        var sideRightAnim = [
+            hxd.Res.player.player_side_right1.toTile(),
+            hxd.Res.player.player_side_right2.toTile(),
+            hxd.Res.player.player_side_right3.toTile()
+        ];
+        var sideLeftAnim = [
+            hxd.Res.player.player_side_left1.toTile(),
+            hxd.Res.player.player_side_left2.toTile(),
+            hxd.Res.player.player_side_left3.toTile()
+        ];
+        var backAnim = [
+            hxd.Res.player.player_back1.toTile(),
+            hxd.Res.player.player_back2.toTile(),
+            hxd.Res.player.player_back3.toTile()
+        ];
+        var anims = [
+            "forward" => forwardAnim,
+            "right" => sideRightAnim,
+            "left" => sideLeftAnim,
+            "back" => backAnim
+        ];
+        return anims;
     }
 
 }

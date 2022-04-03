@@ -1,14 +1,9 @@
 
-### Infinite tower idea
-* procedurally generated
-* platformer
-  
-### Escaping
+# TODO
 
-### Swarm game
-* gradudally increasing swarm
-* swarm uses flocking behaviour
-* player needs to avoid the swarm for as long as possible
-* player can pick up food for energy:
-  * speed corresponds to energy
+* increaese level size
+* implement multiple swarms
+* implement food system
+* implement collisions
+* draw spell animation
 
