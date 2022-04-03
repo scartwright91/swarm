@@ -44,7 +44,6 @@ class Game {
         // vfx
         vfx = new VFX();
 
-
         // sfx
         spellSFX = hxd.Res.sound.spell;
         spellSFX.getData();
@@ -128,10 +127,10 @@ class Game {
                 lightOrbs.remove(orb);
             }
         }
-        for (idx in 0...3) {
+        for (idx in 0...4) {
             var lightOrb = new LightOrb(
-                1 + Math.random() * (level.gridLengthX - 1), 
-                1 + Math.random() * (level.gridLengthY - 1)
+                2 + Math.random() * (level.gridLengthX - 2), 
+                2 + Math.random() * (level.gridLengthY - 2)
             );
             lightOrbs.push(lightOrb);
         }

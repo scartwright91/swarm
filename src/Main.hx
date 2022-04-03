@@ -55,6 +55,8 @@ class Main extends hxd.App {
         if (!menuRunning) {
             fps.text = "FPS: " + Std.int(1 / dt);
             game.update(dt);
+        } else if (!gameFinished) {
+            menu.update();
         }
     }
 
