@@ -99,9 +99,7 @@ class Rat {
                 direction = Math.atan2(p.y - spr.y, p.x - spr.x);
                 // if rat is touching playing
                 if (distanceFrom(new h2d.col.Point(p.x, p.y)) <= biteRadius) {
-                    if (Game.ME.player.health > 10) {
-                        Game.ME.player.health -= 1;
-                    }
+                    Game.ME.player.health -= 1;
                 } 
             }
         } else {

@@ -1,4 +1,5 @@
 import swarm.Swarm;
+import hxd.res.DefaultFont;
 
 class Game {
 
@@ -14,9 +15,18 @@ class Game {
     public var player : Player;
     public var camera : Camera;
 
+    public var swarmInfo : h2d.Text;
+    public var swarmStarted : Bool = false;
+    public var swarmCountdown : Float;
+    public var swarmTimer : Float;
     public var swarm : Swarm;
+
     // vfx
     public var vfx : VFX; 
+
+    // score
+    var wavesSurvived : Int;
+    var scoreInfo : h2d.Text;
 
     public function new() {
 
@@ -35,23 +45,56 @@ class Game {
         camera = new Camera(player.spr);
 
         swarm = new Swarm();
+        swarmCountdown = hxd.Timer.lastTimeStamp;
 
+        createInfoBoxes();
+
+        // set resizing function
         hxd.Window.getInstance().addResizeEvent(resize);
 
     }
 
     public function update(dt : Float) {
+
+        var now = hxd.Timer.lastTimeStamp;
+        scoreInfo.text = 'Waves survived: ' + Std.string(swarm.wave - 1);
+
         player.update();
         camera.update();
         swarm.update();
         level.update();
         vfx.drawVisibility();
         //vfx.drawReflection();
+
+        if (!swarmStarted) {
+            if (now - swarmCountdown > 10) {
+                swarm.addSwarm();
+                swarmStarted = true;
+                swarmInfo.text = 'Avoid the swarm!';
+            } else {
+                swarmInfo.text = 'Swarm coming in ' + Std.string(10 - Std.int(now - swarmCountdown));
+            }
+        }
+
+
+    }
+
+    function createInfoBoxes() {
+        // info
+        swarmInfo = new h2d.Text(DefaultFont.get(), Main.ME.gameScene2d);
+        swarmInfo.scale(4);
+        swarmInfo.color.setColor(Utils.RGBToCol(230, 230, 236, 255));
+
+        scoreInfo = new h2d.Text(DefaultFont.get(), Main.ME.gameScene2d);
+        scoreInfo.y = 50;
+        scoreInfo.scale(4);
+        scoreInfo.color.setColor(Utils.RGBToCol(230, 230, 236, 255));
     }
 
     function resize() {
         vfx.createVisibilityTexture();
         player.createHealthAndEnergy();
+        createInfoBoxes();
     }
 
 }

@@ -48,7 +48,7 @@ class Player {
     var spell : h2d.Graphics;
     public var spellCast : Bool = false;
     var spellDuration : Float;
-    var magicRecoverRate : Float = 0.5;
+    var magicRecoverRate : Float = 0.25;
 
     public function new(x, y) {
 
@@ -85,6 +85,13 @@ class Player {
     }
 
     public function update() {
+
+        if (health <= 0) {
+            Main.ME.completeGame();
+        }
+
+        if (visibilityRadius > 100)
+            visibilityRadius -= 0.1;
 
         if (energy > 20)
             energy -= 0.01;

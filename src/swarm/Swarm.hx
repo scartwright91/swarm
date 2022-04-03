@@ -8,8 +8,10 @@ class Swarm {
     var swarmSprites : h2d.SpriteBatch;
 
     // swarm vars
+    var swarmDuration : Int = 30;
+    var swarmNumber : Int = 50;
     var swarmTimer : Float;
-    var wave = 1;
+    public var wave = 1;
     var activeSwarm : Bool = false;
     var addingSwarm : Bool = false;
     var returningSwarm : Bool = false;
@@ -26,24 +28,26 @@ class Swarm {
     }
 
     public function update() {
-        if (activeSwarm && (hxd.Timer.lastTimeStamp - swarmTimer > 30) && !returningSwarm) {
+        if (activeSwarm && (hxd.Timer.lastTimeStamp - swarmTimer > swarmDuration) && !returningSwarm) {
             returnSwarm();
         }
         if ((returningSwarm) && (rats.length == 0)) {
             returningSwarm = false;
             activeSwarm = false;
+            Game.ME.swarmStarted = false;
+            Game.ME.swarmCountdown = hxd.Timer.lastTimeStamp;
             wave += 1;
-            if (wave > 2)
-                wave = 2;
+            if (wave > 3)
+                wave = 3;
         }
-        if ((addingSwarm) && (rats.length <= 49 * (wave))) {
+        if ((addingSwarm) && (rats.length <= swarmNumber * (wave))) {
             for (w in 0...wave) {
                 var swarmLoc = swarmLocations[w];
                 var rat = new Rat(swarmLoc.x, swarmLoc.y, false, w);
                 swarms[w].push(rat);
                 rats.push(rat);
             }
-            if (rats.length > 49 * (wave))
+            if (rats.length > swarmNumber * (wave))
                 addingSwarm = false;
         }
         for (swarm in swarms) {
@@ -59,6 +63,7 @@ class Swarm {
     }
 
     public function addSwarm() {
+
         swarms = [];
         rats = [];
         swarmLocations = [];
@@ -82,6 +87,7 @@ class Swarm {
     }
 
     function returnSwarm() {
+        Game.ME.swarmInfo.text = 'Swarm is retreating';
         returningSwarm = true;
     }
 

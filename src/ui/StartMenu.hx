@@ -24,17 +24,17 @@ class StartMenu {
 
         //specify a color we want to draw with
         var g = new h2d.Graphics(menuScene);
-        g.beginFill(0xEA8220);
+        g.beginFill(Utils.RGBToCol(14, 14, 18, 255));
         g.drawRect(0, 0, w, h);
         g.endFill();
 
         hxd.Window.getInstance().addResizeEvent(resizeMenu);      
 
         var play = new h2d.Text(DefaultFont.get(), menuScene);
-        play.text = "Play";
+        play.text = "Click here to play";
         play.x = w / 10;
         play.y = h / 4;
-        play.color.setColor(Utils.RGBToCol(0, 0, 0, 255));
+        play.color.setColor(Utils.RGBToCol(193, 193, 210, 255));
         play.scale(6);
 
         // create interactive box around text

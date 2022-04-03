@@ -41,8 +41,6 @@ class Main extends hxd.App {
         menuRunning = true;
         setScene(menu.menuScene);
 
-        game = new Game();
-
         // render fps
         fps = new h2d.Text(DefaultFont.get(), gameScene2d);
         fps.text = "";
@@ -63,6 +61,7 @@ class Main extends hxd.App {
 
     public function enterGame() {
         menuRunning = false;
+        game = new Game();
         setScene(gameScene2d, false);
     }
 
