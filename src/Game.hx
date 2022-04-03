@@ -16,7 +16,7 @@ class Game {
 
     public var swarm : Swarm;
     // vfx
-    public var visibility : Visibility; 
+    public var vfx : VFX; 
 
     public function new() {
 
@@ -25,7 +25,7 @@ class Game {
         scroller = new h2d.Layers(Main.ME.gameScene2d);
 
         // vfx
-        visibility = new Visibility();
+        vfx = new VFX();
 
         // create level
         world = new World();
@@ -36,6 +36,8 @@ class Game {
 
         swarm = new Swarm();
 
+        hxd.Window.getInstance().addResizeEvent(resize);
+
     }
 
     public function update(dt : Float) {
@@ -43,7 +45,13 @@ class Game {
         camera.update();
         swarm.update();
         level.update();
-        visibility.redraw();
+        vfx.drawVisibility();
+        //vfx.drawReflection();
+    }
+
+    function resize() {
+        vfx.createVisibilityTexture();
+        player.createHealthAndEnergy();
     }
 
 }

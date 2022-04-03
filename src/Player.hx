@@ -14,7 +14,8 @@ enum Facing {
 class Player {
 
     public var spr : h2d.Object;
-    var g : h2d.Graphics;
+    public var g : h2d.Graphics;
+    public var reflection : Graphics;
 
     // player vars
     public var health : Float = 100;
@@ -65,12 +66,18 @@ class Player {
         animations = readAnimations();
 
         spellImages = [
+            hxd.Res.spell_png.toTile(),
             hxd.Res.spell1.toTile(),
             hxd.Res.spell2.toTile(),
             hxd.Res.spell3.toTile()
         ];
 
+        var whiteShader = new shaders.WhiteShader();
+
         g = new h2d.Graphics(spr);
+        // reflection = g;
+        // reflection.addShader(whiteShader);
+        // reflection.rotate(Math.PI);
         g.drawTile(0, 0, animations["forward"][0]);
 
         createHealthAndEnergy();
@@ -102,7 +109,7 @@ class Player {
 
             var diff = hxd.Timer.lastTimeStamp - spellDuration;
             if ((spellFrame == 0) && (diff > 0.1)) {
-                spellFrame += 1;
+                //spellFrame += 1;
                 spell.drawTile(
                     (Settings.TILE_SIZE * Settings.SCALE)/2-200,
                     (Settings.TILE_SIZE * Settings.SCALE)/2-200,
@@ -110,7 +117,7 @@ class Player {
                 );
             }
             if ((spellFrame == 1) && (diff > 0.2)) {
-                spellFrame += 1;
+                //spellFrame += 1;
                 spell.drawTile(
                     (Settings.TILE_SIZE * Settings.SCALE)/2-200,
                     (Settings.TILE_SIZE * Settings.SCALE)/2-200,
@@ -224,7 +231,7 @@ class Player {
         magic = 0;
     }
 
-    function createHealthAndEnergy() {
+    public function createHealthAndEnergy() {
 
         healthBar = new h2d.Graphics(Main.ME.gameScene2d);
         energyBar = new h2d.Graphics(Main.ME.gameScene2d);

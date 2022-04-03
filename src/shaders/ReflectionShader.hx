@@ -1,12 +1,12 @@
 package shaders;
 
-class TestShader extends hxsl.Shader {
+class ReflectionShader extends hxsl.Shader {
 
     static var SRC = {
 
         @:import h3d.shader.Base2d;
         
-        @param var lightMap : Sampler2D;
+        @param var reflectionMap : Sampler2D;
         
         function fragment() {
 
@@ -16,9 +16,9 @@ class TestShader extends hxsl.Shader {
         }
     }
 
-    public function new(_lightMap) {
+    public function new(_reflectionMap) {
         super();
-        lightMap = _lightMap;
+        reflectionMap = _reflectionMap;
     }
 
 }
