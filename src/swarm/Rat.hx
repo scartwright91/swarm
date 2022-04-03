@@ -7,6 +7,8 @@ class Rat {
     public var spr : h2d.Object;
     var g : h2d.Graphics;
 
+    public var swarm : Int;
+
     // vars
     var speed : Float = 2 * Settings.SCALE;
     var biteRadius : Float = 10 * Settings.SCALE;
@@ -23,8 +25,9 @@ class Rat {
     // filters
     var normalMap : h2d.Tile;
 
-    public function new(x:Float, y:Float, debug:Bool) {
+    public function new(x:Float, y:Float, debug:Bool, s:Int) {
 
+        swarm = s;
         debugging = debug;
 
         spr = new h2d.Object();
@@ -60,10 +63,8 @@ class Rat {
         normalMap.scrollDiscrete(1, 1);
 
         if (returning) {
-            var direction = Math.atan2(
-                Game.ME.swarm.swarmPixelLocation.y - spr.y + 0.5,
-                Game.ME.swarm.swarmPixelLocation.x - spr.x + 0.5
-            );
+            var swarmLoc = Game.ME.swarm.swarmPixelLocations[swarm];
+            var direction = Math.atan2(swarmLoc.y - spr.y + 0.5, swarmLoc.x - spr.x + 0.5);
             spr.x += Math.cos(direction) * 3 * Settings.SCALE;
             spr.y += Math.sin(direction) * 3 * Settings.SCALE;
             return;

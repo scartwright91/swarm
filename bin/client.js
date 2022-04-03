@@ -91792,13 +91792,14 @@ swarm_Flocking.prototype = {
 	}
 	,__class__: swarm_Flocking
 };
-var swarm_Rat = function(x,y,debug) {
+var swarm_Rat = function(x,y,debug,s) {
 	this.totalVelocity = new h2d_col_Point();
 	this.flockVelocity = new h2d_col_Point();
 	this.velocity = new h2d_col_Point();
 	this.direction = Math.random() * 2 * Math.PI;
 	this.biteRadius = 20.;
 	this.speed = 4.;
+	this.swarm = s;
 	this.debugging = debug;
 	this.spr = new h2d_Object();
 	Game.ME.scroller.add(this.spr,1);
@@ -91835,7 +91836,8 @@ swarm_Rat.prototype = {
 	,update: function(returning) {
 		this.normalMap.scrollDiscrete(1,1);
 		if(returning) {
-			var direction = Math.atan2(Game.ME.swarm.swarmPixelLocation.y - this.spr.y + 0.5,Game.ME.swarm.swarmPixelLocation.x - this.spr.x + 0.5);
+			var swarmLoc = Game.ME.swarm.swarmPixelLocations[this.swarm];
+			var direction = Math.atan2(swarmLoc.y - this.spr.y + 0.5,swarmLoc.x - this.spr.x + 0.5);
 			var _g = this.spr;
 			var v = _g.x + Math.cos(direction) * 3 * 2.;
 			_g.posChanged = true;
@@ -91924,6 +91926,7 @@ var swarm_Swarm = function() {
 	this.activeSwarm = false;
 	this.wave = 1;
 	this.rats = [];
+	this.swarms = [];
 };
 $hxClasses["swarm.Swarm"] = swarm_Swarm;
 swarm_Swarm.__name__ = "swarm.Swarm";
@@ -91932,36 +91935,72 @@ swarm_Swarm.prototype = {
 		if(this.activeSwarm && hxd_Timer.lastTimeStamp - this.swarmTimer > 30 && !this.returningSwarm) {
 			this.returnSwarm();
 		}
-		if(this.returningSwarm && this.rats.length == 0) {
+		if(this.returningSwarm && this.countRats() == 0) {
 			this.returningSwarm = false;
 			this.activeSwarm = false;
+			this.wave += 1;
 		}
-		if(this.addingSwarm && this.rats.length <= 100) {
-			var rat = new swarm_Rat(this.swarmLocation.x,this.swarmLocation.y,false);
-			this.rats.push(rat);
+		if(this.addingSwarm && this.rats.length <= 99) {
+			var _g = 0;
+			var _g1 = this.wave;
+			while(_g < _g1) {
+				var w = _g++;
+				var swarmLoc = this.swarmLocations[w];
+				var rat = new swarm_Rat(swarmLoc.x,swarmLoc.y,false,w);
+				this.swarms[w].push(rat);
+				this.rats.push(rat);
+			}
 		}
 		var _g = 0;
-		var _g1 = this.rats;
+		var _g1 = this.swarms;
 		while(_g < _g1.length) {
-			var rat = _g1[_g];
+			var swarm = _g1[_g];
 			++_g;
-			rat.update(this.returningSwarm);
-			if(this.returningSwarm && rat.distanceFrom(this.swarmPixelLocation) < 10) {
-				rat.destroy();
+			var _g2 = 0;
+			while(_g2 < swarm.length) {
+				var rat = swarm[_g2];
+				++_g2;
+				rat.update(this.returningSwarm);
+				if(this.returningSwarm && rat.distanceFrom(this.swarmPixelLocations[rat.swarm]) < 50) {
+					rat.destroy();
+					HxOverrides.remove(swarm,rat);
+					HxOverrides.remove(this.rats,rat);
+				}
 			}
 		}
 	}
 	,addSwarm: function() {
-		var ind = Math.random() * Game.ME.level.spawnPoints.length | 0;
-		this.swarmLocation = Game.ME.level.spawnPoints[ind];
-		this.swarmPixelLocation = new h2d_col_Point(this.swarmLocation.x * 32 * 2. + 32.,this.swarmLocation.y * 32 * 2. + 32.);
-		this.addingSwarm = true;
-		this.wave += 1;
-		this.swarmTimer = hxd_Timer.lastTimeStamp;
-		this.activeSwarm = true;
+		this.swarms = [];
+		this.rats = [];
+		this.swarmLocations = [];
+		this.swarmPixelLocations = [];
+		var _g = 0;
+		var _g1 = this.wave;
+		while(_g < _g1) {
+			var w = _g++;
+			var ind = Math.random() * Game.ME.level.spawnPoints.length | 0;
+			var swarmLocation = Game.ME.level.spawnPoints[ind];
+			var swarmPixelLocation = new h2d_col_Point(swarmLocation.x * 32 * 2. + 32.,swarmLocation.y * 32 * 2. + 32.);
+			this.swarmLocations.push(swarmLocation);
+			this.swarmPixelLocations.push(swarmPixelLocation);
+			this.swarms[w] = [];
+			this.addingSwarm = true;
+			this.swarmTimer = hxd_Timer.lastTimeStamp;
+			this.activeSwarm = true;
+		}
 	}
 	,returnSwarm: function() {
 		this.returningSwarm = true;
+	}
+	,countRats: function() {
+		var nrats = 0;
+		var _g = 0;
+		var _g1 = this.swarms.length;
+		while(_g < _g1) {
+			var idx = _g++;
+			nrats += this.swarms[idx].length;
+		}
+		return nrats;
 	}
 	,__class__: swarm_Swarm
 };
