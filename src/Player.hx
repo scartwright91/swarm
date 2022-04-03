@@ -201,14 +201,12 @@ class Player {
     }
 
     function castSpell() {
+        Game.ME.spellSFX.play();
         spell = new h2d.Graphics(spr);
         spell.filter = new h2d.filter.Group([
             new h2d.filter.Glow(Utils.RGBToCol(230, 230, 236, 255), 50, 2),
-            // new h2d.filter.Displacement(disp, 3, 3),
             new h2d.filter.Blur(3),
-            //new h2d.filter.DropShadow(8, Math.PI / 4)
         ]);
-
         spell.drawTile(
             (Settings.TILE_SIZE * Settings.SCALE)/2-200,
             (Settings.TILE_SIZE * Settings.SCALE)/2-200,
@@ -223,7 +221,6 @@ class Player {
     public function createHealthAndEnergy() {
 
         healthBar = new h2d.Graphics(Main.ME.gameScene2d);
-        // energyBar = new h2d.Graphics(Main.ME.gameScene2d);
         magicBar = new h2d.Graphics(Main.ME.gameScene2d);
 
         var w = Main.ME.windowWidth * 0.15;
@@ -234,12 +231,6 @@ class Player {
         healthBar.beginFill(Utils.RGBToCol(255, 0, 0, 255));
         healthBar.drawRect(0, 0, w, h);
         healthBar.endFill();
-
-        // energyBar.x = Main.ME.windowWidth * 0.02;
-        // energyBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
-        // energyBar.beginFill(Utils.RGBToCol(0, 0, 255, 255));
-        // energyBar.drawRect(0, 0, w, h);
-        // energyBar.endFill();
 
         magicBar.x = Main.ME.windowWidth * 0.02;
         magicBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.05;
@@ -260,13 +251,6 @@ class Player {
         healthBar.beginFill(Utils.RGBToCol(255, 0, 0, 255));
         healthBar.drawRect(0, 0, w * health/100, h);
         healthBar.endFill();
-
-        // energyBar.clear();
-        // energyBar.x = Main.ME.windowWidth * 0.02;
-        // energyBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
-        // energyBar.beginFill(Utils.RGBToCol(0, 0, 255, 255));
-        // energyBar.drawRect(0, 0, w * energy / 100, h);
-        // energyBar.endFill();
 
         magicBar.clear();
         magicBar.x = Main.ME.windowWidth * 0.02;

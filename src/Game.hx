@@ -24,7 +24,12 @@ class Game {
     var lightOrbs : Array<LightOrb> = [];
 
     // vfx
-    public var vfx : VFX; 
+    public var vfx : VFX;
+    var clouds : Array<Cloud>;
+
+    // sfx
+    public var spellSFX : hxd.res.Sound;
+    public var rumbleSFX : hxd.res.Sound;
 
     // score
     var wavesSurvived : Int;
@@ -39,17 +44,29 @@ class Game {
         // vfx
         vfx = new VFX();
 
+
+        // sfx
+        spellSFX = hxd.Res.sound.spell;
+        spellSFX.getData();
+        spellSFX.play(false, 0);
+
         // create level
         world = new World();
         level = new Level(world.levels[levelCounter]);
+
+        clouds = [];
+        for (idx in 0...20) {
+            var x = Std.int(Math.random() * 2 * level.pxWid - level.pxWid);
+            var y = Std.int(Math.random() * level.pxHei);
+            var c = new Cloud(x, y);
+            clouds.push(c);
+        }
 
         player = new Player(10, 10);
         camera = new Camera(player.spr);
 
         swarm = new Swarm();
         swarmCountdown = hxd.Timer.lastTimeStamp;
-
-
 
         createInfoBoxes();
 
@@ -62,16 +79,18 @@ class Game {
 
         var now = hxd.Timer.lastTimeStamp;
         scoreInfo.text = 'Waves survived: ' + Std.string(swarm.wave - 1);
-
+        
         player.update();
         camera.update();
         swarm.update();
         level.update();
         vfx.drawVisibility();
-        //vfx.drawReflection();
+
+        for (cloud in clouds)
+            cloud.update();
 
         for (orb in lightOrbs) {
-            if (player.distanceFrom(orb.pos) < 20) {
+            if (player.distanceFrom(orb.pos) < 50) {
                 lightOrbs.remove(orb);
                 orb.destroy();
             } 

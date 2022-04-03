@@ -18,15 +18,18 @@ class Main extends hxd.App {
     public var gameScene2d : h2d.Scene;
     public var reflectionScene : h2d.Scene; 
 
+    // music
+    var music : hxd.res.Sound;
+
     // fps
     var fps : h2d.Text;
-
-    // debugging
-	var fui : h2d.Flow;
 
     override function init() {
 
         ME = this;
+
+        music = hxd.Res.sound.music;
+        music.play(true, 0.5);
 
         gameScene2d = s2d;
         reflectionScene = new h2d.Scene();

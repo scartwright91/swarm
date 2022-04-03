@@ -1,3 +1,5 @@
+import h2d.Object;
+import h2d.Layers;
 import shaders.VisibleShader;
 import h2d.Bitmap;
 import h3d.mat.Texture;
@@ -17,7 +19,6 @@ class VFX {
     public function new () {
 
         createVisibilityTexture();
-        
         // // reflection
         // reflectionTexture = new Texture(w, h, [Target]);
         // reflectionBitmap = new Bitmap(h2d.Tile.fromTexture(reflectionTexture));
@@ -62,6 +63,5 @@ class VFX {
         var pg = Game.ME.player.reflection;
         pg.drawTo(reflectionTexture);
     }
-
 
 }

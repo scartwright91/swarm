@@ -15,6 +15,7 @@ class Swarm {
     var activeSwarm : Bool = false;
     var addingSwarm : Bool = false;
     var returningSwarm : Bool = false;
+    var returningSwarmDuration : Float;
     public var swarmLocations : Array<h2d.col.Point>;
     public var swarmPixelLocations : Array<h2d.col.Point>;
 
@@ -28,18 +29,35 @@ class Swarm {
     }
 
     public function update() {
-        if (activeSwarm && (hxd.Timer.lastTimeStamp - swarmTimer > swarmDuration) && !returningSwarm) {
+        var now = hxd.Timer.lastTimeStamp;
+        if (activeSwarm && (now - swarmTimer > swarmDuration) && !returningSwarm) {
             returnSwarm();
         }
         if ((returningSwarm) && (rats.length == 0)) {
             returningSwarm = false;
             activeSwarm = false;
             Game.ME.swarmStarted = false;
-            Game.ME.swarmCountdown = hxd.Timer.lastTimeStamp;
+            Game.ME.swarmCountdown = now;
+            wave += 1;
+            if (wave > 2)
+                wave = 2;
+        }
+        if (returningSwarm && (now - returningSwarmDuration > 7)) {
+            for (swarm in swarms) {
+                for (rat in swarm) {
+                    rat.destroy();
+                    swarm.remove(rat);
+                    rats.remove(rat);
+                }
+            }
+            returningSwarm = false;
+            activeSwarm = false;
+            Game.ME.swarmStarted = false;
+            Game.ME.swarmCountdown = now;
             wave += 1;
             if (wave > 3)
                 wave = 3;
-        }
+        }   
         if ((addingSwarm) && (rats.length <= swarmNumber * (wave))) {
             for (w in 0...wave) {
                 var swarmLoc = swarmLocations[w];
@@ -53,7 +71,7 @@ class Swarm {
         for (swarm in swarms) {
             for (rat in swarm) {
                 rat.update(returningSwarm);
-                if ((returningSwarm) && (rat.distanceFrom(swarmPixelLocations[rat.swarm]) < 10)) {
+                if ((returningSwarm) && (rat.distanceFrom(swarmPixelLocations[rat.swarm]) < 20)) {
                     rat.destroy();
                     swarm.remove(rat);
                     rats.remove(rat);
@@ -89,6 +107,7 @@ class Swarm {
     function returnSwarm() {
         Game.ME.swarmInfo.text = 'Swarm is retreating';
         returningSwarm = true;
+        returningSwarmDuration = hxd.Timer.lastTimeStamp;
     }
 
     function countRats() : Int {

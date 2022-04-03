@@ -33,6 +33,7 @@ class Level {
         pxHei = Std.int(level.pxHei * Settings.SCALE);
 
         createLevel();
+        addFilters();
 
     }
 
@@ -69,6 +70,7 @@ class Level {
 
     public function addFilters() {
         normalMap = hxd.Res.normalMap.toTile();
+        tiles.filter = new h2d.filter.Displacement(normalMap, 4, 4);
         //water.filter = new h2d.filter.Displacement(normalMap, 4, 4);
         // water.addShader(testShader); 
         // tiles.addShader(testShader);
