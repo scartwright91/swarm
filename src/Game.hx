@@ -21,6 +21,8 @@ class Game {
     public var swarmTimer : Float;
     public var swarm : Swarm;
 
+    var lightOrbs : Array<LightOrb> = [];
+
     // vfx
     public var vfx : VFX; 
 
@@ -47,6 +49,8 @@ class Game {
         swarm = new Swarm();
         swarmCountdown = hxd.Timer.lastTimeStamp;
 
+
+
         createInfoBoxes();
 
         // set resizing function
@@ -66,8 +70,16 @@ class Game {
         vfx.drawVisibility();
         //vfx.drawReflection();
 
+        for (orb in lightOrbs) {
+            if (player.distanceFrom(orb.pos) < 20) {
+                lightOrbs.remove(orb);
+                orb.destroy();
+            } 
+        }
+
         if (!swarmStarted) {
             if (now - swarmCountdown > 10) {
+                createLightOrbs();
                 swarm.addSwarm();
                 swarmStarted = true;
                 swarmInfo.text = 'Avoid the swarm!';
@@ -75,7 +87,6 @@ class Game {
                 swarmInfo.text = 'Swarm coming in ' + Std.string(10 - Std.int(now - swarmCountdown));
             }
         }
-
 
     }
 
@@ -89,6 +100,22 @@ class Game {
         scoreInfo.y = 50;
         scoreInfo.scale(4);
         scoreInfo.color.setColor(Utils.RGBToCol(230, 230, 236, 255));
+    }
+
+    function createLightOrbs() {
+        if (lightOrbs.length > 0) {
+            for (orb in lightOrbs) {
+                orb.destroy();
+                lightOrbs.remove(orb);
+            }
+        }
+        for (idx in 0...3) {
+            var lightOrb = new LightOrb(
+                1 + Math.random() * (level.gridLengthX - 1), 
+                1 + Math.random() * (level.gridLengthY - 1)
+            );
+            lightOrbs.push(lightOrb);
+        }
     }
 
     function resize() {

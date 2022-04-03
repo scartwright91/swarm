@@ -19,7 +19,7 @@ class Player {
 
     // player vars
     public var health : Float = 100;
-    var energy : Float = 100;
+    var energy : Float = 85;
     var magic : Float = 100;
     var healthBar : h2d.Graphics;
     var energyBar : h2d.Graphics;
@@ -48,7 +48,7 @@ class Player {
     var spell : h2d.Graphics;
     public var spellCast : Bool = false;
     var spellDuration : Float;
-    var magicRecoverRate : Float = 0.25;
+    var magicRecoverRate : Float = 0.15;
 
     public function new(x, y) {
 
@@ -72,12 +72,7 @@ class Player {
             hxd.Res.spell3.toTile()
         ];
 
-        var whiteShader = new shaders.WhiteShader();
-
         g = new h2d.Graphics(spr);
-        // reflection = g;
-        // reflection.addShader(whiteShader);
-        // reflection.rotate(Math.PI);
         g.drawTile(0, 0, animations["forward"][0]);
 
         createHealthAndEnergy();
@@ -92,9 +87,6 @@ class Player {
 
         if (visibilityRadius > 100)
             visibilityRadius -= 0.1;
-
-        if (energy > 20)
-            energy -= 0.01;
 
         if ((magic < 100)) {
             magic += magicRecoverRate;
@@ -113,24 +105,7 @@ class Player {
         }
 
         if (spellCast) {
-
             var diff = hxd.Timer.lastTimeStamp - spellDuration;
-            if ((spellFrame == 0) && (diff > 0.1)) {
-                //spellFrame += 1;
-                spell.drawTile(
-                    (Settings.TILE_SIZE * Settings.SCALE)/2-200,
-                    (Settings.TILE_SIZE * Settings.SCALE)/2-200,
-                spellImages[spellFrame]
-                );
-            }
-            if ((spellFrame == 1) && (diff > 0.2)) {
-                //spellFrame += 1;
-                spell.drawTile(
-                    (Settings.TILE_SIZE * Settings.SCALE)/2-200,
-                    (Settings.TILE_SIZE * Settings.SCALE)/2-200,
-                spellImages[spellFrame]
-                );
-            }
             if (diff > 1) {
                 spellCast = false;
                 spr.removeChild(spell);
@@ -227,6 +202,13 @@ class Player {
 
     function castSpell() {
         spell = new h2d.Graphics(spr);
+        spell.filter = new h2d.filter.Group([
+            new h2d.filter.Glow(Utils.RGBToCol(230, 230, 236, 255), 50, 2),
+            // new h2d.filter.Displacement(disp, 3, 3),
+            new h2d.filter.Blur(3),
+            //new h2d.filter.DropShadow(8, Math.PI / 4)
+        ]);
+
         spell.drawTile(
             (Settings.TILE_SIZE * Settings.SCALE)/2-200,
             (Settings.TILE_SIZE * Settings.SCALE)/2-200,
@@ -241,7 +223,7 @@ class Player {
     public function createHealthAndEnergy() {
 
         healthBar = new h2d.Graphics(Main.ME.gameScene2d);
-        energyBar = new h2d.Graphics(Main.ME.gameScene2d);
+        // energyBar = new h2d.Graphics(Main.ME.gameScene2d);
         magicBar = new h2d.Graphics(Main.ME.gameScene2d);
 
         var w = Main.ME.windowWidth * 0.15;
@@ -253,11 +235,11 @@ class Player {
         healthBar.drawRect(0, 0, w, h);
         healthBar.endFill();
 
-        energyBar.x = Main.ME.windowWidth * 0.02;
-        energyBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
-        energyBar.beginFill(Utils.RGBToCol(0, 0, 255, 255));
-        energyBar.drawRect(0, 0, w, h);
-        energyBar.endFill();
+        // energyBar.x = Main.ME.windowWidth * 0.02;
+        // energyBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
+        // energyBar.beginFill(Utils.RGBToCol(0, 0, 255, 255));
+        // energyBar.drawRect(0, 0, w, h);
+        // energyBar.endFill();
 
         magicBar.x = Main.ME.windowWidth * 0.02;
         magicBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.05;
@@ -279,18 +261,23 @@ class Player {
         healthBar.drawRect(0, 0, w * health/100, h);
         healthBar.endFill();
 
-        energyBar.clear();
-        energyBar.x = Main.ME.windowWidth * 0.02;
-        energyBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
-        energyBar.beginFill(Utils.RGBToCol(0, 0, 255, 255));
-        energyBar.drawRect(0, 0, w * energy / 100, h);
-        energyBar.endFill();
+        // energyBar.clear();
+        // energyBar.x = Main.ME.windowWidth * 0.02;
+        // energyBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
+        // energyBar.beginFill(Utils.RGBToCol(0, 0, 255, 255));
+        // energyBar.drawRect(0, 0, w * energy / 100, h);
+        // energyBar.endFill();
 
         magicBar.clear();
         magicBar.x = Main.ME.windowWidth * 0.02;
-        magicBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.05;
+        magicBar.y = Main.ME.windowHeight - Main.ME.windowHeight * 0.1;
         magicBar.beginFill(Utils.RGBToCol(255, 255, 0, 255));
         magicBar.drawRect(0, 0, w * magic / 100, h);
+        if (magic < 100) {
+            magicBar.alpha = 0.3;
+        } else {
+            magicBar.alpha = 1.0;
+        }
         magicBar.endFill();
 
     }
@@ -323,6 +310,10 @@ class Player {
             "back" => backAnim
         ];
         return anims;
+    }
+
+    public function distanceFrom(position : h2d.col.Point) : Float {
+        return Math.sqrt(Math.pow(spr.x - position.x, 2) + Math.pow(spr.y - position.y, 2));
     }
 
 }
