@@ -24,6 +24,8 @@ class Player {
     var energyBar : h2d.Graphics;
     var magicBar : h2d.Graphics;
 
+    public var visibilityRadius : Float = 200 * Settings.SCALE;
+
     // location vars
     var tile : h2d.col.IPoint;
     public var center : h2d.col.Point;
@@ -45,7 +47,7 @@ class Player {
     var spell : h2d.Graphics;
     public var spellCast : Bool = false;
     var spellDuration : Float;
-    var magicRecoverRate : Float = 1;
+    var magicRecoverRate : Float = 0.5;
 
     public function new(x, y) {
 
@@ -220,7 +222,6 @@ class Player {
         spellDuration = hxd.Timer.lastTimeStamp;
         spellFrame = 0;
         magic = 0;
-        magicRecoverRate *= 0.5;
     }
 
     function createHealthAndEnergy() {

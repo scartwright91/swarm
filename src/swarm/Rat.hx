@@ -64,7 +64,7 @@ class Rat {
 
         if (returning) {
             var swarmLoc = Game.ME.swarm.swarmPixelLocations[swarm];
-            var direction = Math.atan2(swarmLoc.y - spr.y + 0.5, swarmLoc.x - spr.x + 0.5);
+            var direction = Math.atan2(swarmLoc.y - spr.y, swarmLoc.x - spr.x);
             spr.x += Math.cos(direction) * 3 * Settings.SCALE;
             spr.y += Math.sin(direction) * 3 * Settings.SCALE;
             return;

@@ -1,3 +1,4 @@
+import h3d.mat.Texture;
 import h2d.col.Point;
 
 class Level {
@@ -14,6 +15,7 @@ class Level {
     public var pxHei : Int;
 
     // tilegroups
+    var tiles : h2d.TileGroup;
     var water : h2d.TileGroup;
     var walls : h2d.TileGroup;
 
@@ -31,7 +33,6 @@ class Level {
         pxHei = Std.int(level.pxHei * Settings.SCALE);
 
         createLevel();
-        addFilters();
 
     }
 
@@ -42,7 +43,7 @@ class Level {
     function createLevel() {
 
         var tileset = hxd.Res.tileset_png.toTile();
-        var tiles = new h2d.TileGroup(tileset);
+        tiles = new h2d.TileGroup(tileset);
         Game.ME.scroller.add(tiles, Settings.BG_LAYER);
 
 		for( autoTile in level.l_Floor.autoTiles ) {
@@ -66,11 +67,11 @@ class Level {
 
     }
 
-    function addFilters() {
+    public function addFilters() {
         normalMap = hxd.Res.normalMap.toTile();
         //water.filter = new h2d.filter.Displacement(normalMap, 4, 4);
-        // var testShader = new shaders.TestShader();
         // water.addShader(testShader); 
+        // tiles.addShader(testShader);
     }
 
 }

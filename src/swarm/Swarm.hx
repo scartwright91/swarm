@@ -5,6 +5,8 @@ class Swarm {
     public var swarms : Array<Array<Rat>> = [];
     public var rats : Array<Rat> = [];
 
+    var swarmSprites : h2d.SpriteBatch;
+
     // swarm vars
     var swarmTimer : Float;
     var wave = 1;
@@ -27,23 +29,27 @@ class Swarm {
         if (activeSwarm && (hxd.Timer.lastTimeStamp - swarmTimer > 30) && !returningSwarm) {
             returnSwarm();
         }
-        if ((returningSwarm) && (countRats() == 0)) {
+        if ((returningSwarm) && (rats.length == 0)) {
             returningSwarm = false;
             activeSwarm = false;
             wave += 1;
+            if (wave > 2)
+                wave = 2;
         }
-        if ((addingSwarm) && (rats.length <= 99)) {
+        if ((addingSwarm) && (rats.length <= 49 * (wave))) {
             for (w in 0...wave) {
                 var swarmLoc = swarmLocations[w];
                 var rat = new Rat(swarmLoc.x, swarmLoc.y, false, w);
                 swarms[w].push(rat);
                 rats.push(rat);
             }
+            if (rats.length > 49 * (wave))
+                addingSwarm = false;
         }
         for (swarm in swarms) {
             for (rat in swarm) {
                 rat.update(returningSwarm);
-                if ((returningSwarm) && rat.distanceFrom(swarmPixelLocations[rat.swarm]) < 50) {
+                if ((returningSwarm) && (rat.distanceFrom(swarmPixelLocations[rat.swarm]) < 10)) {
                     rat.destroy();
                     swarm.remove(rat);
                     rats.remove(rat);

@@ -16,13 +16,16 @@ class Game {
 
     public var swarm : Swarm;
     // vfx
-    public var reflection : Reflection; 
+    public var visibility : Visibility; 
 
     public function new() {
 
         ME = this;
 
         scroller = new h2d.Layers(Main.ME.gameScene2d);
+
+        // vfx
+        visibility = new Visibility();
 
         // create level
         world = new World();
@@ -33,9 +36,6 @@ class Game {
 
         swarm = new Swarm();
 
-        // vfx
-        //reflection = new Reflection();
-
     }
 
     public function update(dt : Float) {
@@ -43,6 +43,7 @@ class Game {
         camera.update();
         swarm.update();
         level.update();
+        visibility.redraw();
     }
 
 }

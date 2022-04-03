@@ -58,7 +58,6 @@ class Main extends hxd.App {
     }
 
     override function render(e:h3d.Engine) {
-        //game.reflection.render(e);
 		s2d.render(e);
     }
 

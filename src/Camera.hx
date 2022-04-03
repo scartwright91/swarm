@@ -29,11 +29,11 @@ class Camera {
         scroller.y = winHei * 0.5 - target.y;
         Main.ME.reflectionScene.x = winWid * 0.5 - target.x;
         Main.ME.reflectionScene.y = winHei * 0.5 - target.y;
-        // Clamp camera to bounds
-        if (winWid < levelWid)
-            scroller.x = fclamp(scroller.x, winWid - levelWid, 0);
-        if (winHei < levelHei)
-            scroller.y = fclamp(scroller.y, winHei - levelHei, 0);
+        // // Clamp camera to bounds
+        // if (winWid < levelWid)
+        //     scroller.x = fclamp(scroller.x, winWid - levelWid, 0);
+        // if (winHei < levelHei)
+        //     scroller.y = fclamp(scroller.y, winHei - levelHei, 0);
     }
 
 	inline public static function fclamp(x:Float, min:Float, max:Float):Float
